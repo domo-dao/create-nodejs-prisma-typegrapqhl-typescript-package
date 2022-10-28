@@ -1,0 +1,1 @@
+{"version":3,"file":"generate-scalars.js","sourceRoot":"","sources":["../../src/generator/generate-scalars.ts"],"names":[],"mappings":";;;AACA,uCAGmB;AAInB,SAAgB,qBAAqB,CACnC,UAAsB,EACtB,OAAyB;IAEzB,IAAA,uCAA6B,EAAC,UAAU,EAAE,OAAO,CAAC,CAAC;IACnD,IAAA,yCAA+B,EAAC,UAAU,CAAC,CAAC;IAE5C,UAAU,CAAC,aAAa,CAAC,QAAQ,CAAC;;;;;;;;;;;;;;;;;GAiBjC,CAAC,CAAC;AACL,CAAC;AAzBD,sDAyBC"}

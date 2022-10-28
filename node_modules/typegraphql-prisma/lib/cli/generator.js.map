@@ -1,0 +1,1 @@
+{"version":3,"file":"generator.js","sourceRoot":"","sources":["../../src/cli/generator.ts"],"names":[],"mappings":";;AAAA,+DAA4D;AAE5D,yDAA8C;AAE9C,IAAA,mCAAgB,EAAC;IACf,UAAU,EAAE,GAAG,EAAE,CAAC,CAAC;QACjB,aAAa,EAAE,sCAAsC;QACrD,UAAU,EAAE,yBAAyB;QACrC,kBAAkB,EAAE,CAAC,kBAAkB,CAAC;KACzC,CAAC;IACF,UAAU,EAAE,2BAAQ;CACrB,CAAC,CAAC"}

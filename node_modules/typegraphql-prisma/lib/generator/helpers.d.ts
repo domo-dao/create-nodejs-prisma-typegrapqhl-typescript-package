@@ -1,0 +1,14 @@
+import { DmmfDocument } from "./dmmf/dmmf-document";
+import { DMMF } from "./dmmf/types";
+export declare function noop(): void;
+export declare function getFieldTSType(dmmfDocument: DmmfDocument, typeInfo: DMMF.TypeInfo, isRequired: boolean, isInputType: boolean, modelName?: string, typeName?: string): string;
+export declare function mapScalarToTSType(scalar: string, isInputType: boolean): "string" | "number" | "Buffer" | "bigint" | "boolean" | "Date" | "Prisma.InputJsonValue" | "Prisma.JsonValue" | "Prisma.Decimal";
+export declare function getTypeGraphQLType(typeInfo: DMMF.TypeInfo, dmmfDocument: DmmfDocument, modelName?: string, typeName?: string, isIdField?: boolean): string;
+export declare function mapScalarToTypeGraphQLType(scalar: string, emitIdAsIDType: boolean | undefined, isIdField?: boolean): string;
+export declare function camelCase(str: string): string;
+export declare function pascalCase(str: string): string;
+export declare function getModelNameFromInputType(inputTypeName: string): string | undefined;
+export declare function getInputTypeName(originalInputName: string, dmmfDocument: DmmfDocument): string;
+export declare function cleanDocsString(documentation: string | undefined): string | undefined;
+export declare function convertNewLines(str: string): string;
+export declare function toUnixPath(maybeWindowsPath: string): string;
