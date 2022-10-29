@@ -10,13 +10,15 @@ generator typegraphql {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./test.db"
+  url      = "file:../test.db"
 }
 
 model User {
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String
+  auth0Id  String? @unique
+  isActive Boolean @default(true)
   posts Post[]
 }
 

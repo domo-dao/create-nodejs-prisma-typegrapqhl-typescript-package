@@ -1,9 +1,7 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-.DS_Store
-.env
-.idea
 node_modules
+/lib
+.idea/
+coverage/
+.DS_Store
+test.db
+prisma/generated
