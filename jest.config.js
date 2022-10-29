@@ -1,4 +1,4 @@
 module.exports = {
-  setupFilesAfterEnv: ["./server/config/jest.js"],
+  setupFilesAfterEnv: ["./src/shared/jest.ts"],
   testTimeout: 50 * 1000
 };

@@ -28,7 +28,8 @@ export class CustomAuthChecker implements AuthCheckerInterface<GraphqlContext, P
     permissions: PermissionFunction[]
   ): Promise<boolean> {
     const { root, args, context, info } = resolverData;
-    if (context.user === undefined) return true;
+    console.log("CustomAuthChecker:context.user:", context.user);
+    if (context.user === null) return true;
 
     if (context.user == null) {
       return false;

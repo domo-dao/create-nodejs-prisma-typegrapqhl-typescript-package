@@ -19,15 +19,15 @@ import { SubscriptionResolver, PublishNotification, pubSub } from "./shared/grap
 async function startApp(resolvers: NonEmptyArray<Function>) {
   const app = express();
   const httpServer = createServer(app);
+
   // Build graphql Schema from exposed resolvers
   const schema = await buildSchema({
     resolvers:[...resolvers, SubscriptionResolver],
-    validate: false,
+    validate: true,
+    pubSub: pubSub,
+    globalMiddlewares: [PublishNotification],
     authChecker
   });
-
-  // @ts-ignore
-  // const schema = makeExecutableSchema({ resolvers });
 
   // Creating the WebSocket server
   const wsServer = new WebSocketServer({
@@ -37,13 +37,12 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
     // serves expressMiddleware at a different path
     path: "/graphql"
   });
+
   const serverCleanup = useServer({ schema }, wsServer);
   const apolloServer = new ApolloServer({
     introspection: true,
     debug: true,
-    schema,
-    globalMiddlewares: [PublishNotification],
-    pubSub: pubSub,
+    schema:schema,
     subscription: true,
     csrfPrevention: true,
     cache: "bounded",

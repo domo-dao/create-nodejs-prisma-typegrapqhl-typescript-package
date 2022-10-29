@@ -11,5 +11,6 @@ const basePermission = async (resolverData: ResolverData<GraphqlContext>): Promi
 
 export const userActionsConfig: ResolverActionsConfig<"User"> = {
   aggregateUser: [Authorized<PermissionFunction>(basePermission)],
-  findFirstUser: [Authorized<PermissionFunction>(basePermission)]
+  findFirstUser: [Authorized<PermissionFunction>(basePermission)],
+  createOneUser: [Authorized<PermissionFunction>(basePermission)],
 };

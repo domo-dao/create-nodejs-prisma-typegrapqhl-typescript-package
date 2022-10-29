@@ -2,6 +2,10 @@ import { Field, MiddlewareFn, ObjectType, Resolver, Root, Subscription } from 't
 
 import { PubSub } from 'graphql-subscriptions';
 
+// This is a in memory Pub Sub system. It is not persistent.
+// For multiple servers, you need to use a persistent Pub Sub system:
+// https://github.com/GraphQLCollege/graphql-postgres-subscriptions
+//
 export const pubSub = new PubSub();
 
 @ObjectType()
@@ -32,11 +36,6 @@ export class SubscriptionResolver {
 
 
 export const PublishNotification: MiddlewareFn = async ({ info }, next) => {
-  console.log("EUREKA")
-  console.log("EUREKA")
-  console.log("EUREKA")
-  console.log("EUREKA")
-  console.log("EUREKA")
   // Perform operation.
   const result = await next();
   // If operation fails, we won't get here.  If it succeeds, publish.
