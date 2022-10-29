@@ -14,7 +14,8 @@ const { resolvers } = require("./shared/graphql");
 const { buildSchema } = require("type-graphql");
 const { authChecker, getGraphqlContext } = require("./shared/auth");
 const express = require("express");
-import { SubscriptionResolver, PublishNotification, pubSub } from "./shared/graphql-subscription";
+import { SubscriptionResolver, PublishNotificationMiddleware, pubSub } from "./shared/graphql-subscription";
+import { TriggersResolvers } from "./shared/graphql-middleware";
 
 async function startApp(resolvers: NonEmptyArray<Function>) {
   const app = express();
@@ -22,10 +23,10 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
 
   // Build graphql Schema from exposed resolvers
   const schema = await buildSchema({
-    resolvers:[...resolvers, SubscriptionResolver],
+    resolvers: [...resolvers, SubscriptionResolver],
     validate: true,
     pubSub: pubSub,
-    globalMiddlewares: [PublishNotification],
+    globalMiddlewares: [PublishNotificationMiddleware, TriggersResolvers],
     authChecker
   });
 
@@ -42,7 +43,7 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
   const apolloServer = new ApolloServer({
     introspection: true,
     debug: true,
-    schema:schema,
+    schema: schema,
     subscription: true,
     csrfPrevention: true,
     cache: "bounded",

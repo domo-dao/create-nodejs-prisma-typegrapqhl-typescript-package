@@ -35,7 +35,7 @@ export class SubscriptionResolver {
 }
 
 
-export const PublishNotification: MiddlewareFn = async ({ info }, next) => {
+export const PublishNotificationMiddleware: MiddlewareFn = async ({ info }, next) => {
   // Perform operation.
   const result = await next();
   // If operation fails, we won't get here.  If it succeeds, publish.
