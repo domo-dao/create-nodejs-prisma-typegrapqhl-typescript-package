@@ -1,9 +1,9 @@
 {
   "name": "create-nodejs-prisma-typegraphql-package",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Starter for a Prisma + GraphQL API with Node.js, TypeGraphQL and TypeScript With Subscriptions, Authentication and Triggers",
   "main": "src/app.ts",
-  "author": "@alacret",
+  "author": "domo-dao/alacret",
   "license": "ISC",
   "scripts": {
     "start": "nodemon src/app.ts",
