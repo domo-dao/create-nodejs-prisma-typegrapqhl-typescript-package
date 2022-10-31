@@ -6,6 +6,7 @@
   "author": "domo-dao/alacret",
   "license": "ISC",
   "scripts": {
+    "build": "tsc",
     "start": "nodemon src/app.ts",
     "lint": "eslint ./src/ --ignore-path .gitignore",
     "format": "prettier --write \"./**/*.{js,json}\""
@@ -58,15 +59,12 @@
   "keywords": [
     "node.js",
     "express.js",
-    "passport",
-    "jsonwebtoken",
-    "sequelize",
-    "mysql2",
-    "winston",
-    "lodash",
-    "moment",
-    "aws-sdk",
-    "prettier"
+    "auth0",
+    "prisma",
+    "typescript",
+    "typegraphql",
+    "grapqhl",
+    "prisma-typegraphql"
   ],
   "husky": {
     "hooks": {
