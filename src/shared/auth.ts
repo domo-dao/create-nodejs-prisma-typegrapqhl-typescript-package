@@ -108,18 +108,25 @@ const getAuth0UserFromToken = (authorizationHeader: string): Auth0User | null =>
   return null;
 };
 
-// @ts-expect-error
-export const getGraphqlContext = async ({ req }): Promise<GraphqlContext> => {
+export const getGraphqlContext = async ({ req, connectionParams }: GraphqlContextParams): Promise<GraphqlContext> => {
   let auth0User = null;
   let user = null;
-  if (req.headers.authorization !== undefined) {
-    auth0User = getAuth0UserFromToken(req.headers.authorization);
+
+  const authorization = req?.headers?.authorization || connectionParams?.Authorization;
+
+  if (authorization !== undefined) {
+    auth0User = getAuth0UserFromToken(authorization);
     if (auth0User !== null) {
       user = await getOrCreateSessionUser(auth0User);
     }
   }
   return { prisma: PRISMA, auth0User, user };
 };
+
+interface GraphqlContextParams {
+  req?: {headers?: { authorization?: string } };
+  connectionParams?: { Authorization?: string };
+}
 
 export interface Auth0User {
   auth0_id: string;
