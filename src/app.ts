@@ -39,7 +39,7 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
     path: "/graphql"
   });
 
-  const serverCleanup = useServer({ schema }, wsServer);
+  const serverCleanup = useServer({ schema, context: getGraphqlContext }, wsServer);
   const apolloServer = new ApolloServer({
     introspection: true,
     debug: true,
