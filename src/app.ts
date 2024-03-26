@@ -1,19 +1,15 @@
-import { NonEmptyArray } from "type-graphql";
-import { createServer } from "http";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
-
-const assert = require("assert").strict;
-const reflect = require("reflect-metadata");
-assert.equal(typeof reflect, "object");
-
-const { ApolloServer } = require("apollo-server-express");
-const { resolvers } = require("./shared/graphql");
-const { buildSchema } = require("type-graphql");
-const { authChecker, getGraphqlContext } = require("./shared/auth");
-import { pubSub } from "./shared/graphql-subscription";
-const express = require("express");
+import 'reflect-metadata';
+import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { expressMiddleware } from '@apollo/server/express4';
+import { NonEmptyArray, buildSchema } from 'type-graphql';
+import { resolvers } from './shared/graphql';
+import { pubSub } from './shared/graphql-subscription';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { authChecker, getGraphqlContext } from './shared/auth';
+import { WebSocketServer } from 'ws';
+import express from 'express';
+import http from 'http';
 
 /**
  * @description - This function starts the server.
@@ -22,59 +18,55 @@ const express = require("express");
  */
 async function startApp(resolvers: NonEmptyArray<Function>) {
   const app = express();
-  const httpServer = createServer(app);
+  const httpServer = http.createServer(app);
 
-  // Build graphql Schema from exposed resolvers
+  app.use(express.json());
+
   const schema = await buildSchema({
-    resolvers: [...resolvers],
+    resolvers,
     validate: true,
-    pubSub: pubSub,
-    // globalMiddlewares: [ /* ... */ ],
-    authChecker
+    pubSub,
+    authChecker,
   });
 
-  // Creating the WebSocket server
   const wsServer = new WebSocketServer({
-    // This is the `httpServer` we created in a previous step.
     server: httpServer,
-    // Pass a different path here if app.use
-    // serves expressMiddleware at a different path
-    path: "/graphql"
+    path: '/graphql',
   });
+  const serverCleanup = useServer(
+    { schema, context: getGraphqlContext },
+    wsServer,
+  );
 
-  const serverCleanup = useServer({ schema, context: getGraphqlContext }, wsServer);
-  const apolloServer = new ApolloServer({
+  const server = new ApolloServer({
     introspection: true,
-    debug: true,
-    schema: schema,
-    subscription: true,
+    schema,
     csrfPrevention: true,
-    cache: "bounded",
-    context: getGraphqlContext,
+    cache: 'bounded',
     plugins: [
-      // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
-
-      // Proper shutdown for the WebSocket server.
       {
         async serverWillStart() {
           return {
             async drainServer() {
               await serverCleanup.dispose();
-            }
+            },
           };
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
-  await apolloServer.start();
 
-  apolloServer.applyMiddleware({ app });
+  await server.start();
+  app.use(
+    expressMiddleware(server, {
+      context: getGraphqlContext,
+    }),
+  );
 
-  httpServer.listen(3000, () => {
-    console.log(
-      `🚀 Server ready at http://localhost:${3000}${apolloServer.graphqlPath}`
-    );
+  httpServer.listen(4000, () => {
+    console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+    console.log(`🔔 Subscriptions ready at ws://localhost:4000/graphql`);
   });
 }
 

@@ -8,12 +8,14 @@ import {
 import { NonEmptyArray } from "type-graphql";
 import { applyResolversEnhanceMap } from "../../prisma/generated/type-graphql";
 import { userActionsConfig } from "../modules/user/permissions";
+import { NotificationResolver } from "./graphql-subscription";
 
 export const resolvers: NonEmptyArray<Function> = [
   FindFirstUserResolver,
   CreateOneUserResolver,
   FindFirstPostResolver,
   CreateOnePostResolver,
+  NotificationResolver,
 ];
 
 export const resolversEnhanceMap: ResolversEnhanceMap = {
