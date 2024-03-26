@@ -9,7 +9,7 @@
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "./lib",
+    "outDir": "./dist",
     "strict": true,
     "allowJs": true,
     "esModuleInterop": true

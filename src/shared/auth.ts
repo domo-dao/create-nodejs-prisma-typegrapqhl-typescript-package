@@ -1,17 +1,26 @@
-import { PrismaClient } from "@prisma/client";
-import { AuthChecker, ResolverData } from "type-graphql";
-import JwksRsa, { SigningKey } from "jwks-rsa";
-import * as jwt from "jsonwebtoken";
-import { User } from "../../prisma/generated/type-graphql/models/User";
-import { getOrCreateSessionUser } from "../modules/user/services";
-import { AUTH0_AUDIENCE, AUTH0_EMAIL_CLAIM, AUTH0_ISSUER_BASE_URL } from "./environment";
-import { PRISMA } from "./db";
-import { PermissionFunction } from "./base-permissions";
+import { AuthChecker, ResolverData } from 'type-graphql';
+import JwksRsa, { SigningKey } from 'jwks-rsa';
+import * as jwt from 'jsonwebtoken';
+import { getOrCreateSessionUser } from '../modules/user/services';
+import {
+  AUTH0_AUDIENCE,
+  AUTH0_EMAIL_CLAIM,
+  AUTH0_ISSUER_BASE_URL,
+} from './environment';
+import { PRISMA } from './db';
+import { PermissionFunction } from './base-permissions';
+import {
+  Auth0User,
+  AuthCheckerInterface,
+  DecodedAccessToken,
+  GraphqlContext,
+  GraphqlContextParams,
+} from './auth-types';
 
 const jwksClient = JwksRsa({
   cache: true,
   cacheMaxAge: 60 * 60 * 24 * 30,
-  jwksUri: `${AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`
+  jwksUri: `${AUTH0_ISSUER_BASE_URL}.well-known/jwks.json`,
 });
 
 let signingKeys: SigningKey[] = [];
@@ -22,23 +31,19 @@ jwksClient
   })
   .catch(console.error);
 
-export class CustomAuthChecker implements AuthCheckerInterface<GraphqlContext, PermissionFunction> {
+export class CustomAuthChecker
+implements AuthCheckerInterface<GraphqlContext, PermissionFunction>
+{
   async check(
     resolverData: ResolverData<GraphqlContext>,
-    permissions: PermissionFunction[]
+    permissions: PermissionFunction[],
   ): Promise<boolean> {
-    const { root, args, context, info } = resolverData;
-    console.log("CustomAuthChecker:context.user:", context.user);
+    const { context } = resolverData;
     if (context.user === null) return true;
 
     if (context.user == null) {
       return false;
     }
-
-    console.log("authChecker:", root);
-    console.log("authChecker:", args, info.path, permissions);
-    console.log("authChecker:context:auth0user", context.auth0User);
-    console.log("authChecker:user:", context.user);
 
     if (!context.user.isActive) {
       return false;
@@ -61,29 +66,33 @@ export class CustomAuthChecker implements AuthCheckerInterface<GraphqlContext, P
   }
 }
 
-export const authChecker: AuthChecker<GraphqlContext, PermissionFunction> = async (
-  { root, args, context, info },
-  permissions
-) => {
-  return await new CustomAuthChecker().check({ root, args, context, info }, permissions);
+export const authChecker: AuthChecker<
+  GraphqlContext,
+  PermissionFunction
+> = async ({ root, args, context, info }, permissions) => {
+  return await new CustomAuthChecker().check(
+    { root, args, context, info },
+    permissions,
+  );
 };
 
-
-const getAuth0UserFromToken = (authorizationHeader: string): Auth0User | null => {
-  if (authorizationHeader === "") {
+const getAuth0UserFromToken = (
+  authorizationHeader: string,
+): Auth0User | null => {
+  if (authorizationHeader === '') {
     return null;
   }
   if (signingKeys.length === 0) {
     return null;
   }
 
-  const [tokenPrefix, token] = authorizationHeader.split(" ");
+  const [tokenPrefix, token] = authorizationHeader.split(' ');
 
-  if (tokenPrefix !== "Bearer") {
+  if (tokenPrefix !== 'Bearer') {
     return null;
   }
 
-  if (token === undefined || token === "") {
+  if (token === undefined || token === '') {
     return null;
   }
 
@@ -93,7 +102,7 @@ const getAuth0UserFromToken = (authorizationHeader: string): Auth0User | null =>
       jwt.verify(token, key.getPublicKey(), {
         issuer: AUTH0_ISSUER_BASE_URL,
         audience: AUTH0_AUDIENCE,
-        ignoreExpiration: false
+        ignoreExpiration: false,
       });
     } catch (err: any) {
       continue;
@@ -102,17 +111,21 @@ const getAuth0UserFromToken = (authorizationHeader: string): Auth0User | null =>
     return {
       auth0_id: decode.sub,
       email: decode[AUTH0_EMAIL_CLAIM],
-      isActive: true
+      isActive: true,
     };
   }
   return null;
 };
 
-export const getGraphqlContext = async ({ req, connectionParams }: GraphqlContextParams): Promise<GraphqlContext> => {
+export const getGraphqlContext = async ({
+  req,
+  connectionParams,
+}: GraphqlContextParams): Promise<GraphqlContext> => {
   let auth0User = null;
   let user = null;
 
-  const authorization = req?.headers?.authorization || connectionParams?.Authorization;
+  const authorization =
+    req?.headers?.authorization || connectionParams?.Authorization;
 
   if (authorization !== undefined) {
     auth0User = getAuth0UserFromToken(authorization);
@@ -122,31 +135,3 @@ export const getGraphqlContext = async ({ req, connectionParams }: GraphqlContex
   }
   return { prisma: PRISMA, auth0User, user };
 };
-
-interface GraphqlContextParams {
-  req?: {headers?: { authorization?: string } };
-  connectionParams?: { Authorization?: string };
-}
-
-export interface Auth0User {
-  auth0_id: string;
-  email: string;
-  isActive: boolean;
-}
-
-export interface DecodedAccessToken extends Record<string, string> {
-  sub: string;
-}
-
-export interface AuthCheckerInterface<TContextType = {}, TRoleType = string> {
-  check: (
-    resolverData: ResolverData<TContextType>,
-    roles: TRoleType[]
-  ) => boolean | Promise<boolean>;
-}
-
-export interface GraphqlContext {
-  prisma: PrismaClient;
-  auth0User: Auth0User | null;
-  user: User | null;
-}

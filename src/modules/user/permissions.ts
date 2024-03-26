@@ -1,7 +1,7 @@
 import { Authorized, ResolverData, UseMiddleware } from "type-graphql";
 import { ResolverActionsConfig } from "../../../prisma/generated/type-graphql";
 import { PermissionFunction } from "../../shared/base-permissions";
-import { GraphqlContext } from "../../shared/auth";
+import { GraphqlContext } from "shared/auth-types";
 
 const basePermission = async (resolverData: ResolverData<GraphqlContext>): Promise<boolean> => {
   console.log("basePermission:", resolverData);

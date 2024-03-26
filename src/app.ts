@@ -10,23 +10,26 @@ assert.equal(typeof reflect, "object");
 
 const { ApolloServer } = require("apollo-server-express");
 const { resolvers } = require("./shared/graphql");
-
 const { buildSchema } = require("type-graphql");
 const { authChecker, getGraphqlContext } = require("./shared/auth");
+import { pubSub } from "./shared/graphql-subscription";
 const express = require("express");
-import { SubscriptionResolver, PublishNotificationMiddleware, pubSub } from "./shared/graphql-subscription";
-import { TriggersResolvers } from "./shared/graphql-middleware";
 
+/**
+ * @description - This function starts the server.
+ * @param {NonEmptyArray<Function>} resolvers - Array of resolvers to be exposed by the server.
+ * @returns {Promise<void>} - Nothing.
+ */
 async function startApp(resolvers: NonEmptyArray<Function>) {
   const app = express();
   const httpServer = createServer(app);
 
   // Build graphql Schema from exposed resolvers
   const schema = await buildSchema({
-    resolvers: [...resolvers, SubscriptionResolver],
+    resolvers: [...resolvers],
     validate: true,
     pubSub: pubSub,
-    globalMiddlewares: [PublishNotificationMiddleware, TriggersResolvers],
+    // globalMiddlewares: [ /* ... */ ],
     authChecker
   });
 
@@ -68,7 +71,6 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
 
   apolloServer.applyMiddleware({ app });
 
-  // const server = app.listen(port, () => {
   httpServer.listen(3000, () => {
     console.log(
       `🚀 Server ready at http://localhost:${3000}${apolloServer.graphqlPath}`
