@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { ResolverData } from 'type-graphql';
 import { GraphqlContext } from "./auth";
 
