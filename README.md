@@ -10,7 +10,14 @@ It includes features for:
 ## Main dependencies
 
 - Node 20.9.0
-- npm 10.1.0
+- Express 4.19.2
+- Prisma 5.11.0
+- Graphql 15.3.0
+- Apollo Server 4.10.2
+- Apollo Server Core 3.13.0
+- Apollo Server Express 3.13.0
+- TypeGraphql 1.1.1
+- Prisma TypeGraphql 0.27.2
 - TypeScript 5.4.3
 - Nodemon 3.1.0
 
