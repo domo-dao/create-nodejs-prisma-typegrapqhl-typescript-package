@@ -27,7 +27,7 @@ async function startApp(resolvers: NonEmptyArray<Function>) {
   // Build graphql Schema from exposed resolvers
   const schema = await buildSchema({
     resolvers: [...resolvers],
-    validate: false,
+    validate: true,
     pubSub: pubSub,
     // globalMiddlewares: [ /* ... */ ],
     authChecker
