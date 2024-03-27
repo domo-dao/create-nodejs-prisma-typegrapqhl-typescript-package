@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { ResolverData } from 'type-graphql';
-import { GraphqlContext } from "./auth";
+import { GraphqlContext } from './auth-types';
 
 export enum PERMISSION {
   CREATE_PATIENT,

@@ -5,3 +5,4 @@ coverage/
 .DS_Store
 test.db
 prisma/generated
+/dist

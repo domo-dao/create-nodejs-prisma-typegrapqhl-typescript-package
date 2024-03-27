@@ -16,6 +16,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-undef': 'off',
     indent: ['error', 2],
     semi: [2, 'always'],
     'no-console': ['error', { allow: ['warn', 'error', 'log'] }],

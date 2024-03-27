@@ -1,6 +1,6 @@
-import { Auth0User } from '../../shared/auth';
 import { PRISMA } from '../../shared/db';
 import { User } from '../../../prisma/generated/type-graphql';
+import { Auth0User } from 'shared/auth-types';
 
 export const getOrCreateSessionUser = async (auth0User: Auth0User): Promise<User> => {
   // TODO: Implement Caching on Redis or Faster solution
